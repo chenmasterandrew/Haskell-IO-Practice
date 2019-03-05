@@ -42,7 +42,23 @@
     Type any word and I will tell you if it is in the dictionary:
     
     *Main> 
-    
--}
 
-main = putStrLn "Put your program here!"
+-}
+import Data.Char (toLower)
+
+main = do
+    dictionary <- readFile "/usr/share/dict/american-english"
+    putStrLn "Type any word and I will tell you if it is in the dictionary:"
+    rawWord <- getLine
+    let word = [toLower (rawWord !! x) | x <- [0..(length rawWord - 1)]]
+    if word == []
+        then 
+            return ()
+        else
+            if elem word (words dictionary)
+                then do
+                    putStrLn ("Yes, " ++ word ++ " is in the dictionary.")
+                    main
+                else do
+                    putStrLn ("No, " ++ word ++ " is not in the dictionary.")
+                    main

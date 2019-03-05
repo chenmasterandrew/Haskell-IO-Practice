@@ -39,15 +39,39 @@
     I KNEW IT! Thank you.
 -}
 
-guessIt :: Int -> IO ()
-guessIt 11 = putStrLn "Wait.. I have already guessed everything! Cheater."
-guessIt s = do
-    putStrLn $ "Is your number " ++ show s ++ "? (answer \"yes\" or \"no\") "
-    guess <- getLine
-    if guess == "yes"
-        then putStrLn "I KNEW IT! Thank you."
-        else guessIt (s+1)
+guessIt :: [Int] -> IO ()
+guessIt [] = putStrLn "Wait.. I have already guessed everything! Cheater."
+guessIt nums = do
+    if length nums > 2
+        then do
+            let mid = nums !! (quot (length nums) 2 - 1)
+            putStrLn ("Is your number greater than " ++ show mid ++ "? (answer \"yes\" or \"no\")")
+            answer <- getLine
+            if answer == "yes"
+                then
+                    guessIt [x| x <- nums, x > mid]
+                else
+                    guessIt [x| x <- nums, x <= mid]
+        else do
+            if length nums == 2
+                then do
+                    putStrLn ("Is your number " ++ show (last nums) ++ "? (answer \"yes\" or \"no\")")
+                    answer <- getLine
+                    if answer == "yes"
+                        then do
+                            putStrLn "I KNEW IT! Thank you."
+                            return ()
+                        else
+                            guessIt [head nums]
+                else do
+                    putStrLn ("Your number is " ++ show (last nums) ++ ", right? (answer \"yes\" or \"no\")")
+                    answer <- getLine
+                    if answer == "yes"
+                        then do
+                            putStrLn "I KNEW IT! Thank you."
+                            return ()
+                        else guessIt []
 
 main = do
-    putStrLn "Think of a number between 1 and 10 and I will guess it."
-    guessIt 1
+    putStrLn "Think of a number between 1 and 1000 and I will guess it."
+    guessIt [1..1000]

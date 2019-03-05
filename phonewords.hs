@@ -22,8 +22,46 @@
     *Main> 
 
 -}
+charToPhoneDigit :: Char -> Int
+charToPhoneDigit c
+    | elem c ['a','b','c','A','B','C'] = 2
+    | elem c ['d','e','f','D','E','F'] = 3
+    | elem c ['g','h','i','G','H','I'] = 4
+    | elem c ['j','k','l','J','K','L'] = 5
+    | elem c ['m','n','o','M','N','O'] = 6
+    | elem c ['p','q','r','s','P','Q','R','S'] = 7
+    | elem c ['t','u','v','T','U','V'] = 8
+    | elem c ['w','c','y','z','W','X','Y','Z'] = 9
+    | otherwise = 0
 
-import PTfuncsyntax
+numListToNum :: [Int] -> Int
+numListToNum nums = read (numList nums)::Int
+numList :: [Int] -> String
+numList [] = []
+numList nums = (show (head nums) ++ numList (tail nums))
 
+wordsToPhone :: String -> Int
+wordsToPhone s = numListToNum (wordsToPhoneList s)
+wordsToPhoneList :: String -> [Int]
+wordsToPhoneList s
+    | s == [] = []
+    | charToPhoneDigit (head s) == 0 = wordsToPhoneList (tail s)
+    | otherwise = [charToPhoneDigit (head s)] ++ wordsToPhoneList (tail s)
 
-main = putStrLn "Put your program here!"
+printer :: [String] -> IO ()
+printer [] = putStrLn ""
+printer l = do
+    putStrLn ("\"" ++ head l ++ "\"")
+    printer (tail l)
+main = do
+    dictionary <- readFile "/usr/share/dict/american-english"
+    let dict = words dictionary
+    putStrLn "Type a four-digit number:"
+    num <- readLn
+    if length (show num) == 4
+        then do
+            let wordList = [dict !! x | x <- [0..(length dict - 1)], wordsToPhone (dict !! x) == num]
+            printer wordList
+            return ()
+        else
+            return ()

@@ -45,8 +45,17 @@
 -}
 
 -- Copy your fizzBuzz function and supporting functions here
+isDivisor n d = if n `mod` d == 0 then True else False
+isFizzBuzz n f b = if isDivisor n f && isDivisor n b then "FizzBuzz" else if isDivisor n f then "Fizz" else if isDivisor n b then "Buzz" else show n
+fizzBuzz n f b = [isFizzBuzz x f b| x <-[1..n]]
 
+main = do  
+    putStrLn "How many numbers shall we print? "
+    n <- readLn
+    putStrLn "For multiples of what number shall we print 'Fizz'? "
+    f <- readLn
+    putStrLn "For multiples of what number shall we print 'Buzz'? "
+    b <- readLn
+    mapM_ putStrLn (fizzBuzz n f b)
 
-
-main = putStrLn "Put your program here!"
 
