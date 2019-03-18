@@ -31,7 +31,7 @@ charToPhoneDigit c
     | elem c ['m','n','o','M','N','O'] = 6
     | elem c ['p','q','r','s','P','Q','R','S'] = 7
     | elem c ['t','u','v','T','U','V'] = 8
-    | elem c ['w','c','y','z','W','X','Y','Z'] = 9
+    | elem c ['w','x','y','z','W','X','Y','Z'] = 9
     | otherwise = 0
 
 numListToNum :: [Int] -> Int
@@ -48,20 +48,18 @@ wordsToPhoneList s
     | charToPhoneDigit (head s) == 0 = wordsToPhoneList (tail s)
     | otherwise = [charToPhoneDigit (head s)] ++ wordsToPhoneList (tail s)
 
-printer :: [String] -> IO ()
+--printer :: [String] -> IO ()
 printer [] = putStrLn ""
 printer l = do
-    putStrLn ("\"" ++ head l ++ "\"")
+    putStrLn (show (head l))
     printer (tail l)
+
+func x n = wordsToPhone x == n
+
 main = do
     dictionary <- readFile "/usr/share/dict/american-english"
     let dict = words dictionary
     putStrLn "Type a four-digit number:"
     num <- readLn
-    if length (show num) == 4
-        then do
-            let wordList = [dict !! x | x <- [0..(length dict - 1)], wordsToPhone (dict !! x) == num]
-            printer wordList
-            return ()
-        else
-            return ()
+    let wordList = filter (`func` num) (dict)
+    printer wordList
